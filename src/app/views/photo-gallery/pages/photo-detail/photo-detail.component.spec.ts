@@ -23,14 +23,14 @@ describe('PhotoDetailComponent', () => {
         {
           provide: BaseApiService,
           useValue: { photoApiService: { getImageById: () =>of({
-              download_url: 'any',
-              id: 'te'
-            } as IPhoto) } },
+                download_url: 'any',
+                id: 'te'
+              } as IPhoto) } },
         },
         { provide: FavoritesService, useValue: {
-          removeImage: () => {},
+            removeImage: () => {},
             favoritesSet: new Set()
-        } },
+          } },
         {
           provide: ActivatedRoute,
           useValue: { snapshot: { paramMap: { get: () => 'id' } } },
@@ -61,12 +61,4 @@ describe('PhotoDetailComponent', () => {
       expect(button?.disabled).toBeTrue();
     })
   }));
-
-  // it('should enable the remove button if the image is in favorites', () => {
-  //   favoritesService.addImage(mockPhoto.id);
-  //
-  //   fixture.detectChanges();
-  //   const button = fixture.nativeElement.querySelector('button');
-  //   expect(button.disabled).toBeFalse();
-  // });
 });
