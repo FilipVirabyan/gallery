@@ -12,8 +12,18 @@ export class AddHeartIconDirective {
     this.addIcon();
   };
 
-  constructor(private _el: ElementRef, private _renderer: Renderer2) {}
+  constructor(private _el: ElementRef, private _renderer: Renderer2) {
+  }
 
+  /**
+   Adds a heart icon to the first child of the native element.
+
+   The heart icon is positioned absolutely in the top right corner of the first child element.
+
+   This function uses the Renderer2 API to create and manipulate DOM elements.
+
+   @returns Nothing
+   */
   addIcon() {
     const iconElement = this._renderer.createElement('span');
     this._renderer.setStyle(this._el.nativeElement.firstChild, 'position', 'relative');
