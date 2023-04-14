@@ -1,7 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import {PhotoGalleryComponent} from "@views/photo-gallery/pages/photo-gallery/photo-gallery.component";
 
-const routes: Routes = [];
+const routes: Routes = [
+  {
+    path: '',
+    component: PhotoGalleryComponent
+  },
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

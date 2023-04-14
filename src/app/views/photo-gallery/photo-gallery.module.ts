@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { PhotoGalleryRoutingModule } from './photo-gallery-routing.module';
 import { PhotoGalleryComponent } from './pages/photo-gallery/photo-gallery.component';
+import {ListContainerComponent, ListPhotoComponent} from "../../shared/components";
 
 
 @NgModule({
@@ -11,7 +12,9 @@ import { PhotoGalleryComponent } from './pages/photo-gallery/photo-gallery.compo
   ],
   imports: [
     CommonModule,
-    PhotoGalleryRoutingModule
+    PhotoGalleryRoutingModule,
+    ListContainerComponent,
+    ListPhotoComponent
   ]
 })
 export class PhotoGalleryModule { }
