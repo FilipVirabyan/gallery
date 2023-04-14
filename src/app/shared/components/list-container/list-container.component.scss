@@ -1,0 +1,8 @@
+.image-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 300px;
+  grid-column-gap: 50px;
+  grid-row-gap: 20px;
+  margin: 20px;
+}
