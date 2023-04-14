@@ -1,64 +1,85 @@
-import {ComponentFixture, TestBed, waitForAsync} from '@angular/core/testing';
-import { ActivatedRoute } from '@angular/router';
-import { Observable, of } from 'rxjs';
-import { IPhoto } from '@core/models';
-import { BaseApiService } from '@core/api-services/base-api/base-api.service';
-import { PhotoDetailComponent } from './photo-detail.component';
-import {FavoritesService} from "@core/services";
-import {CommonModule} from "@angular/common";
+import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {ActivatedRoute} from '@angular/router';
+import {of} from 'rxjs';
+import {IPhoto} from '@core/models';
+import {BaseApiService} from '@core/api-services';
+import {FavoritesService} from '@core/services';
+import {PhotoDetailComponent} from "@views/photo-gallery/pages/photo-detail/photo-detail.component";
+import {By} from "@angular/platform-browser";
 
-describe('PhotoDetailComponent', () => {
+
+describe('PhotoDetailsComponent', () => {
   let component: PhotoDetailComponent;
-  let baseApiService: BaseApiService;
-  let favoritesService: FavoritesService;
-  let route: ActivatedRoute;
   let fixture: ComponentFixture<PhotoDetailComponent>;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
+  const activatedRouteMock = {
+    snapshot: {
+      paramMap: {
+        get: () => '1'
+      }
+    }
+  };
+
+  const baseApiServiceMock = {
+    photoApiService: {
+      getImageById: () => of({
+        id: '1',
+        download_url: 'https://example.com/image.jpg'
+      } as IPhoto)
+    }
+  };
+
+  const favoritesServiceMock = {
+    removeImage:  jasmine.createSpy(),
+    favoritesSet: new Set(['1'])
+  };
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       declarations: [PhotoDetailComponent],
-      imports: [CommonModule],
       providers: [
-        PhotoDetailComponent,
-        {
-          provide: BaseApiService,
-          useValue: { photoApiService: { getImageById: () =>of({
-                download_url: 'any',
-                id: 'te'
-              } as IPhoto) } },
-        },
-        { provide: FavoritesService, useValue: {
-            removeImage: () => {},
-            favoritesSet: new Set()
-          } },
-        {
-          provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: { get: () => 'id' } } },
-        },
-      ],
-    });
+        {provide: ActivatedRoute, useValue: activatedRouteMock},
+        {provide: BaseApiService, useValue: baseApiServiceMock},
+        {provide: FavoritesService, useValue: favoritesServiceMock}
+      ]
+    })
+      .compileComponents();
+  });
+
+  beforeEach(() => {
     fixture = TestBed.createComponent(PhotoDetailComponent);
-    component = TestBed.inject(PhotoDetailComponent);
-    baseApiService = TestBed.inject(BaseApiService);
-    favoritesService = TestBed.inject(FavoritesService);
-    route = TestBed.inject(ActivatedRoute);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should remove image from favorites when removeFromFavorites is called', () => {
-    spyOn(favoritesService, 'removeImage');
-    component.removeFromFavorites('123');
-    expect(favoritesService.removeImage).toHaveBeenCalledWith('123');
+  it('should display the image', () => {
+    const imgElement = fixture.nativeElement.querySelector('img');
+    expect(imgElement).toBeTruthy();
+    expect(imgElement.src).toBe('https://example.com/image.jpg');
+    expect(imgElement.alt).toBe('1');
   });
 
-  it('should disable the remove button if the image is not in favorites', waitForAsync(() => {
-    component.photoDetails$.subscribe(response => {
-      fixture.detectChanges();
-      const button = fixture.nativeElement.querySelector('button');
-      expect(button?.disabled).toBeTrue();
-    })
+  it('should remove the image from favorites', () => {
+    const buttonElement = fixture.nativeElement.querySelector('button');
+    expect(buttonElement).toBeTruthy();
+    expect(buttonElement.disabled).toBe(false);
+    buttonElement.click();
+    expect(favoritesServiceMock.removeImage).toHaveBeenCalledWith('1');
+  });
+
+  it('should disable the button if the photo is not in favorites', fakeAsync(() => {
+    const favoritesService = TestBed.inject(FavoritesService);
+    spyOn(favoritesService.favoritesSet, 'has').and.returnValue(false);
+
+    const fixture = TestBed.createComponent(PhotoDetailComponent);
+    fixture.detectChanges();
+    tick();
+
+    const button = fixture.debugElement.query(By.css('button'));
+    expect(button.nativeElement.disabled).toBeTruthy();
   }));
 });
