@@ -7,6 +7,7 @@ import {BaseApiService} from '@core/api-services';
 import {FavoritesService} from '@core/services';
 import {PhotoGalleryComponent} from './photo-gallery.component';
 import {ListContainerComponent, ListPhotoComponent, SpinnerComponent} from "@shared/components";
+import {SharedModule} from "@shared/shared.module";
 
 // Mock data
 const mockImages: IPhoto[] = [
@@ -30,7 +31,13 @@ describe('PhotoGalleryComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [PhotoGalleryComponent],
-      imports: [HttpClientTestingModule, SpinnerComponent, ListContainerComponent, ListPhotoComponent],
+      imports: [
+        HttpClientTestingModule,
+        SpinnerComponent,
+        ListContainerComponent,
+        ListPhotoComponent,
+        SharedModule
+      ],
       providers: [
         FavoritesService,
         {provide: BaseApiService, useClass: MockBaseApiService}
