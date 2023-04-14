@@ -1,4 +1,4 @@
-import {Directive, ElementRef, Input} from '@angular/core';
+import {Directive, ElementRef, Input, Renderer2} from '@angular/core';
 
 @Directive({
   selector: '[appAddHeartIcon]'
@@ -12,20 +12,21 @@ export class AddHeartIconDirective {
     this.addIcon();
   };
 
-  constructor(private el: ElementRef) {
-  }
+  constructor(private _el: ElementRef, private _renderer: Renderer2) {}
 
   addIcon() {
-    const iconElement = document.createElement('span');
-    this.el.nativeElement.firstChild.style.position = 'relative';
-    iconElement.classList.add('material-icons', 'heart-icon');
-    iconElement.textContent = 'favorite';
-    iconElement.style.zIndex = '1';
-    iconElement.style.top = '0';
-    iconElement.style.right = '0';
-    iconElement.style.transform = 'translate(-50%, 100%)'
-    iconElement.style.position = 'absolute';
-    this.el.nativeElement.firstChild.appendChild(iconElement)
+    const iconElement = this._renderer.createElement('span');
+    this._renderer.setStyle(this._el.nativeElement.firstChild, 'position', 'relative');
+    this._renderer.addClass(iconElement, 'material-icons');
+    this._renderer.addClass(iconElement, 'heart-icon');
+    const text = this._renderer.createText('favorite');
+    this._renderer.appendChild(iconElement, text);
+    this._renderer.setStyle(iconElement, 'z-index', '1');
+    this._renderer.setStyle(iconElement, 'top', '0');
+    this._renderer.setStyle(iconElement, 'right', '0');
+    this._renderer.setStyle(iconElement, 'transform', 'translate(-50%, 100%)');
+    this._renderer.setStyle(iconElement, 'position', 'absolute');
+    this._renderer.appendChild(this._el.nativeElement.firstChild, iconElement);
   }
 
 }
