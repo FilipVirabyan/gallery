@@ -1,5 +1,5 @@
-import {Component, Input} from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {SharedModule} from "../../shared.module";
 
 @Component({
@@ -7,7 +7,8 @@ import {SharedModule} from "../../shared.module";
   standalone: true,
   imports: [CommonModule, SharedModule],
   templateUrl: './list-photo.component.html',
-  styleUrls: ['./list-photo.component.scss']
+  styleUrls: ['./list-photo.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ListPhotoComponent {
   @Input() photoId!: string;

@@ -4,6 +4,7 @@
     *ngIf="images.length">
     <ng-container>
       <app-list-photo
+        [appAddHeartIcon]="favoritesService.favoritesSet.has(image.id)"
         *ngFor="let image of images"
         (click)="favoritesService.addImage(image.id)"
         [photoId]="image.id">

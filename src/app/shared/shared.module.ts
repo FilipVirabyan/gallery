@@ -1,18 +1,20 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {ImageUrlPipe} from "./pipes";
-import {InfiniteScrollDirective} from "@shared/directives";
+import {AddHeartIconDirective, InfiniteScrollDirective} from "@shared/directives";
 @NgModule({
   declarations: [
     ImageUrlPipe,
-    InfiniteScrollDirective
+    InfiniteScrollDirective,
+    AddHeartIconDirective
   ],
   imports: [
     CommonModule,
   ],
-  exports:[
+  exports: [
     ImageUrlPipe,
-    InfiniteScrollDirective
+    InfiniteScrollDirective,
+    AddHeartIconDirective
   ]
 })
 export class SharedModule { }
