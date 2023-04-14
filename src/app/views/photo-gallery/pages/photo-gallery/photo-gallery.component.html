@@ -1,4 +1,5 @@
-<section>
+<section appInfiniteScroll
+         (scrollEnd)="loadMoreImages()">
   <app-list-container
     *ngIf="images.length">
     <ng-container>
@@ -8,4 +9,5 @@
       </app-list-photo>
     </ng-container>
   </app-list-container>
+  <app-spinner [show]="loading"></app-spinner>
 </section>

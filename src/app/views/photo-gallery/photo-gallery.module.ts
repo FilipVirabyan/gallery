@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 
 import { PhotoGalleryRoutingModule } from './photo-gallery-routing.module';
 import { PhotoGalleryComponent } from './pages/photo-gallery/photo-gallery.component';
-import {ListContainerComponent, ListPhotoComponent} from "../../shared/components";
+import {ListContainerComponent, ListPhotoComponent, SpinnerComponent} from "../../shared/components";
+import {SharedModule} from "@shared/shared.module";
 
 
 @NgModule({
@@ -14,7 +15,9 @@ import {ListContainerComponent, ListPhotoComponent} from "../../shared/component
     CommonModule,
     PhotoGalleryRoutingModule,
     ListContainerComponent,
-    ListPhotoComponent
+    ListPhotoComponent,
+    SharedModule,
+    SpinnerComponent
   ]
 })
 export class PhotoGalleryModule { }
