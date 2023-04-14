@@ -3,6 +3,7 @@ import {IPhoto} from "@core/models";
 import {BaseApiService} from "@core/api-services";
 import {delay, finalize} from "rxjs";
 import {ArithmeticHelper} from "@core/helpers";
+import {FavoritesService} from "@core/services";
 
 @Component({
   selector: 'app-photo-gallery',
@@ -14,7 +15,8 @@ export class PhotoGalleryComponent implements OnInit {
   loading: boolean = false;
   private _page: number = 1;
 
-  constructor(private _baseApiService: BaseApiService) {
+  constructor(private _baseApiService: BaseApiService,
+              public favoritesService: FavoritesService) {
   }
 
   ngOnInit() {
