@@ -7,6 +7,10 @@ const routes: Routes = [
     loadChildren: () => import('./views/photo-gallery/photo-gallery.module').then((m) => m.PhotoGalleryModule)
   },
   {
+    path: 'favorites',
+    loadChildren: () => import('./views/favorites/favorites.module').then((m) => m.FavoritesModule)
+  },
+  {
     path: '**',
     redirectTo: 'photos'
   }

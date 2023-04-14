@@ -1,1 +1,2 @@
-// All of the services should be exported from here
+export * from './favorites/favorites.service'
+export * from './storage/storage.service'
