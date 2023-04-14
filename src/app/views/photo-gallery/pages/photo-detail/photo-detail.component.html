@@ -1,0 +1,10 @@
+<div class="image-container" *ngIf="(photoDetails$|async) as image">
+  <img [src]="image.download_url" [alt]="image.id">
+  <div class="remove-button-container">
+    <button mat-raised-button color="warn"
+            [disabled]="!favoritesService.favoritesSet.has(image.id)"
+            (click)="removeFromFavorites(image.id)">
+      Remove from favorites
+    </button>
+  </div>
+</div>

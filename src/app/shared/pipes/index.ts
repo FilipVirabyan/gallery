@@ -1,1 +1,1 @@
-// All of the shared pipes should be exported from here
+export * from './image-url/image-url.pipe'

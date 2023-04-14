@@ -1,0 +1,1 @@
+export const IMAGES_LIST_LIMIT_PER_PAGE= 12

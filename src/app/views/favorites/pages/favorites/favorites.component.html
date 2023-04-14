@@ -1,0 +1,10 @@
+<section>
+  <app-list-container>
+    <ng-container>
+      <app-list-photo *ngFor="let imageId of favorites"
+                      [routerLink]="['/photos', imageId]"
+                      [photoId]="imageId"></app-list-photo>
+    </ng-container>
+  </app-list-container>
+</section>
+
