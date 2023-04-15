@@ -1,47 +1,52 @@
-import {Directive, ElementRef, EventEmitter, HostListener, OnDestroy, OnInit, Output} from '@angular/core';
-import {debounceTime, filter, fromEvent, Subject, takeUntil} from "rxjs";
+import {Directive, EventEmitter, HostListener, OnDestroy, Output} from '@angular/core';
+import {Subject, takeUntil, timer} from "rxjs";
 
 @Directive({
   selector: '[appInfiniteScroll]'
 })
-export class InfiniteScrollDirective implements OnInit, OnDestroy {
-
+export class InfiniteScrollDirective implements OnDestroy {
   @Output() scrollEnd = new EventEmitter<void>();
-  private _subscription$ = new Subject<void>();
+  private _destroy$ = new Subject<void>();
 
-  constructor(private _elementRef: ElementRef<HTMLElement>) {
+  private isScrolling = false;
+
+  constructor() {
   }
 
-  ngOnInit() {
-    this._debounceListener()
+  @HostListener('scroll', ['$event.target'])
+  onScroll(target: HTMLElement) {
+    if (!this.isScrolling) {
+      this.isScrolling = true;
+      timer(500)
+        .pipe(
+          takeUntil(this._destroy$)
+        )
+        .subscribe(() => {
+          this.isScrolling = false;
+          this._emitScroll(target);
+        });
+    }
   }
 
   /**
-   * Subscribes to the `_scrollEnd$` Observable and applies the `debounceTime()` and `takeUntil()` operators
-   * to debounce the event and unsubscribe when the component is destroyed.
-   * Emits a `scrollEnd` event through the `scrollEnd` EventEmitter when the debounced event is emitted.
+   *  Emits a scrollEnd event through the scrollEnd EventEmitter when the user has scrolled to the bottom of the
+   *  scrollable element.
    *
-   * @returns Nothing.
+   *  @param target - The HTMLElement that triggered the scroll event.
+   *
+   *  @returns Nothing.
    */
-  private _debounceListener() {
-    fromEvent(this._elementRef.nativeElement, 'scroll')
-      .pipe(
-        debounceTime(500),
-        filter(() => {
-          const windowHeight = window.innerHeight;
-          const scrollTop = this._elementRef.nativeElement.scrollTop || 0;
-          const scrollHeight = document.documentElement.scrollHeight;
-          return scrollTop + windowHeight >= scrollHeight - 100
-        }),
-        takeUntil(this._subscription$)
-      ).subscribe(() => {
+  private _emitScroll(target: HTMLElement) {
+    const windowHeight = window.innerHeight;
+    const scrollTop = target.scrollTop || 0;
+    const scrollHeight = target.scrollHeight;
+    if (scrollTop + windowHeight >= scrollHeight - 100) {
       this.scrollEnd.emit();
-    });
+    }
   }
 
   ngOnDestroy() {
-    this._subscription$.next();
-    this._subscription$.complete();
+    this._destroy$.next();
+    this._destroy$.complete();
   }
-
 }

@@ -1,71 +1,51 @@
-import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
-import {Component, DebugElement, ElementRef} from '@angular/core';
-import {By} from '@angular/platform-browser';
-
-import {InfiniteScrollDirective} from '@shared/directives';
+import {TestBed, ComponentFixture, tick, fakeAsync} from '@angular/core/testing';
+import { Component, DebugElement } from '@angular/core';
+import { By } from '@angular/platform-browser';
+import { InfiniteScrollDirective } from '@shared/directives';
 
 @Component({
   template: `
-    <div style="height: 200px; overflow-y: scroll;" appInfiniteScroll (scrollEnd)="onScrollEnd()"></div>
+    <div style="height: 500px; overflow-y: scroll;" appInfiniteScroll (scrollEnd)="onScrollEnd()"></div>
   `
 })
 class TestComponent {
-  onScrollEnd() {
-  }
+  public onScrollEnd() {}
 }
 
 describe('InfiniteScrollDirective', () => {
-  let component: TestComponent;
   let fixture: ComponentFixture<TestComponent>;
-  let debugElement: DebugElement;
-  let directive: InfiniteScrollDirective;
-  let elementRef: ElementRef<HTMLElement>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [
-        TestComponent,
-        InfiniteScrollDirective
-      ]
-    }).compileComponents();
-  });
+  let component: TestComponent;
+  let directiveEl: DebugElement;
+  let directiveInstance: InfiniteScrollDirective;
 
   beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [TestComponent, InfiniteScrollDirective]
+    });
+
     fixture = TestBed.createComponent(TestComponent);
     component = fixture.componentInstance;
-    debugElement = fixture.debugElement.query(By.directive(InfiniteScrollDirective));
-    directive = debugElement.injector.get(InfiniteScrollDirective);
-    elementRef = debugElement.injector.get(ElementRef);
-    fixture.detectChanges();
+    directiveEl = fixture.debugElement.query(By.directive(InfiniteScrollDirective));
+    directiveInstance = directiveEl.injector.get(InfiniteScrollDirective);
   });
 
-  it('should create an instance', () => {
-    expect(directive).toBeTruthy();
+  it('should create', () => {
+    expect(directiveInstance).toBeTruthy();
   });
 
-  // it('should emit scrollEnd event when scrolled to the bottom', fakeAsync(() => {
-  //   const spy = spyOn(component, 'onScrollEnd');
-  //   const windowHeight = window.innerHeight;
-  //   const scrollHeight = document.documentElement.scrollHeight;
-  //
-  //   elementRef.nativeElement.scrollTop = scrollHeight - windowHeight - 100;
-  //   debugElement.triggerEventHandler('scroll', null);
-  //   fixture.detectChanges();
-  //   tick(100);
-  //   expect(spy).toHaveBeenCalled();
-  // }));
-
-  it('should not emit scrollEnd event when not scrolled to the bottom', () => {
+  it('should emit scrollEnd event when user has scrolled to the bottom of scrollable element', fakeAsync(() => {
     const spy = spyOn(component, 'onScrollEnd');
-    const windowHeight = window.innerHeight;
-    const scrollHeight = document.documentElement.scrollHeight;
-    elementRef.nativeElement.scrollTop = scrollHeight - windowHeight - 200;
-    debugElement.triggerEventHandler('scroll', null);
-    fixture.detectChanges();
-    expect(spy).not.toHaveBeenCalled();
-  });
+    const scrollableEl = directiveEl.nativeElement;
 
-  afterEach(() => {
+    scrollableEl.scrollTop = scrollableEl.scrollHeight - scrollableEl.clientHeight + 1;
+    scrollableEl.dispatchEvent(new Event('scroll'));
+    tick(500)
+    expect(spy).toHaveBeenCalledTimes(1);
+  }));
+
+  it('should unsubscribe from interval when directive is destroyed', () => {
+    const spy = spyOn(directiveInstance['_destroy$'], 'next');
     fixture.destroy();
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 });
