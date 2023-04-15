@@ -1,47 +1,51 @@
-import {Component} from '@angular/core';
 import {TestBed, ComponentFixture, tick, fakeAsync} from '@angular/core/testing';
-import {By} from '@angular/platform-browser';
-import {InfiniteScrollDirective} from '@shared/directives';
+import { Component, DebugElement } from '@angular/core';
+import { By } from '@angular/platform-browser';
+import { InfiniteScrollDirective } from '@shared/directives';
 
 @Component({
   template: `
-    <div style="height: 200px; overflow: auto" appInfiniteScroll (scrollEnd)="onScrollEnd()">
-      <div style="height: 1000px"></div>
-    </div>
+    <div style="height: 500px; overflow-y: scroll;" appInfiniteScroll (scrollEnd)="onScrollEnd()"></div>
   `
 })
 class TestComponent {
-  onScrollEnd() {
-  }
+  public onScrollEnd() {}
 }
 
 describe('InfiniteScrollDirective', () => {
   let fixture: ComponentFixture<TestComponent>;
   let component: TestComponent;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [InfiniteScrollDirective, TestComponent]
-    }).compileComponents();
-  });
+  let directiveEl: DebugElement;
+  let directiveInstance: InfiniteScrollDirective;
 
   beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [TestComponent, InfiniteScrollDirective]
+    });
+
     fixture = TestBed.createComponent(TestComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    directiveEl = fixture.debugElement.query(By.directive(InfiniteScrollDirective));
+    directiveInstance = directiveEl.injector.get(InfiniteScrollDirective);
   });
 
-  it('should emit scrollEnd event when scrolled to bottom', fakeAsync(() => {
-    const syp = spyOn(component, "onScrollEnd")
-    const directiveEl = fixture.debugElement.query(By.directive(InfiniteScrollDirective)).nativeElement;
-    const scrollHeight = directiveEl.scrollHeight;
-    const clientHeight = directiveEl.clientHeight;
+  it('should create', () => {
+    expect(directiveInstance).toBeTruthy();
+  });
 
-    // Scroll to the bottom
-    directiveEl.scrollTop = scrollHeight - clientHeight;
-    directiveEl.dispatchEvent(new Event('scroll'));
+  it('should emit scrollEnd event when user has scrolled to the bottom of scrollable element', fakeAsync(() => {
+    const spy = spyOn(component, 'onScrollEnd');
+    const scrollableEl = directiveEl.nativeElement;
+
+    scrollableEl.scrollTop = scrollableEl.scrollHeight - scrollableEl.clientHeight + 1;
+    scrollableEl.dispatchEvent(new Event('scroll'));
     tick(500)
-    fixture.detectChanges();
-    expect(syp).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalledTimes(1);
   }));
+
+  it('should unsubscribe from interval when directive is destroyed', () => {
+    const spy = spyOn(directiveInstance['_destroy$'], 'next');
+    fixture.destroy();
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
 });
