@@ -5,7 +5,7 @@
     <ng-container>
       <app-list-photo
         [appAddHeartIcon]="favoritesService.favoritesSet.has(image.id)"
-        *ngFor="let image of images"
+        *ngFor="let image of images;trackBy: trackByFn"
         (click)="favoritesService.addImage(image.id)"
         [photoId]="image.id">
       </app-list-photo>
