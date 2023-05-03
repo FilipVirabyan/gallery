@@ -19,8 +19,7 @@ describe('HeaderComponent', () => {
         MatIconModule,
         MatButtonModule,
       ]
-    })
-      .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(HeaderComponent);
     component = fixture.componentInstance;

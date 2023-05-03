@@ -21,6 +21,7 @@ export class PhotoGalleryComponent implements OnInit {
 
   ngOnInit() {
     this.loadMoreImages(false)
+
   }
 
   /**
@@ -31,7 +32,9 @@ export class PhotoGalleryComponent implements OnInit {
    * @return Nothing.
    */
   loadMoreImages(needDelay: boolean = true) {
-    if (this.loading) return;
+    if (this.loading) {
+      return
+    }
     this.loading = true;
     const delayTime = needDelay ? ArithmeticHelper.getRandomNumberInRange(200, 300) : 0;
     this._baseApiService.photoApiService.getListOfImages(this._page)
@@ -44,6 +47,10 @@ export class PhotoGalleryComponent implements OnInit {
         this._page++;
       }
     );
+  }
+
+  trackByFn(index:number, item:IPhoto) {
+    return item.id;
   }
 
 }
